@@ -1,6 +1,6 @@
 package game.skills;
 
-public class Skill<T1, T2> {
+public abstract class Skill<T1, T2> {
     private T1 target;
     private T2 changes;
     private String name;
@@ -40,5 +40,10 @@ public class Skill<T1, T2> {
 
     public boolean equals(Object obj){
         return obj instanceof Skill && ((Skill) obj).getName().equals(name);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }
