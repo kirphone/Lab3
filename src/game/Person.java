@@ -4,7 +4,7 @@ import game.skills.*;
 
 import java.util.*;
 
-abstract class Person {
+public abstract class Person {
     private final FIO name;
     protected double speed;
     private Location currentLoc;

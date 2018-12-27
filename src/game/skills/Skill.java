@@ -1,22 +1,31 @@
 package game.skills;
 
+import game.Person;
+
 public class Skill<T1, T2> {
     private T1 target;
     private T2 changes;
     private String name;
-    private MessageGenerator<T2> specialTextMessage;
+    private MessageGenerator<T1, T2> specialTextMessage;
     private Changeable<T1, T2> action;
+    private Person subject;
 
-    public Skill(String _name, T1 _target, Changeable<T1, T2> _action, T2 _changes, MessageGenerator _specialTextMessage){
+    public Skill(String _name, T1 _target, Changeable<T1, T2> _action, T2 _changes,
+                 MessageGenerator<T1, T2> _specialTextMessage, Person _subject){
         name = _name;
         target = _target;
         action = _action;
         changes = _changes;
         specialTextMessage = _specialTextMessage;
+        subject = _subject;
+    }
+
+    public Skill(String _name, T1 _target, Changeable<T1, T2> _action, T2 _changes){
+        this(_name, _target, _action, _changes, null, null);
     }
 
     public Skill(String _name, T1 _target){
-        this(_name, _target, null, null, (changes) -> "");
+        this(_name, _target, null, null, null, null);
     }
 
     public void setTarget(T1 _target){
@@ -31,14 +40,13 @@ public class Skill<T1, T2> {
         return target;
     }
 
-    public void setSpecialTextMessage(MessageGenerator message){
+    public void setSpecialTextMessage(MessageGenerator<T1, T2> message){
         specialTextMessage = message;
     }
 
-    private boolean printSpecialTextMessage(){
-        String message = specialTextMessage.generate(changes);
+    private void printSpecialTextMessage(){
+        String message = specialTextMessage.generate(subject, target, changes);
         System.out.println(message);
-        return message.equals("");
     }
 
     public void setAction(Changeable<T1, T2> _action){
@@ -50,8 +58,10 @@ public class Skill<T1, T2> {
     }
 
     public void perform(){
+        if(specialTextMessage != null) {
+            printSpecialTextMessage();
+        }
         action.change(target, changes);
-        printSpecialTextMessage();
     }
 
     public String toString(){
