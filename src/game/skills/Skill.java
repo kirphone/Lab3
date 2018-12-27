@@ -1,6 +1,6 @@
 package game.skills;
 
-public abstract class Skill<T1, T2> {
+public class Skill<T1, T2> {
     private T1 target;
     private T2 changes;
     private String name;
@@ -19,14 +19,34 @@ public abstract class Skill<T1, T2> {
         this(_name, _target, null, null, (changes) -> "");
     }
 
+    public void setTarget(T1 _target){
+        target = _target;
+    }
+
     public String getName(){
         return name;
+    }
+
+    public T1 getTarget(){
+        return target;
+    }
+
+    public void setSpecialTextMessage(MessageGenerator message){
+        specialTextMessage = message;
     }
 
     private boolean printSpecialTextMessage(){
         String message = specialTextMessage.generate(changes);
         System.out.println(message);
         return message.equals("");
+    }
+
+    public void setAction(Changeable<T1, T2> _action){
+        action = _action;
+    }
+
+    public void setChanges(T2 _changes){
+        changes = _changes;
     }
 
     public void perform(){

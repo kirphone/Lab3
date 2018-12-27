@@ -3,18 +3,15 @@ package game;
 import game.skills.Changeable;
 import game.skills.MessageGenerator;
 import game.skills.Skill;
-
 import java.util.*;
 
 class Journey {
 
-    Map<String, Changeable> skillsActions;
-
-    Person pyatachok;
-
+    private Map<String, Changeable> skillsActions;
+    private Person pyatachok, kenga, robin, kroshka, puch;
     public Journey() {
-        initializeSkillsActions();
         initializePersons();
+        initializeSkillsActions();
         initializeSkills();
     }
 
@@ -24,23 +21,28 @@ class Journey {
         pyatachok.goToPlace(Location.PYATACHOKHOME);
     }
 
-    private void initializeSkillsActions() {
-        skillsActions = new HashMap();
-        Changeable<Double, Double> runChanges = ((num, mult) -> (num * mult));
-        skillsActions.put("run", runChanges);
-        Changeable<HashSet<Color>, ArrayList<Color> > changeColor = ((before, changes) -> {
-            before.addAll(changes);
-            changes.clear();
-            return before;
-        });
-        skillsActions.put("changeColor", changeColor);
-
-        Changeable<Double, Double> rollChanges = ((num, add) -> (num + add));
-        skillsActions.put("roll", rollChanges);
+    private void initializePersons(){
+        pyatachok = new Animal(new FIO("Генри-Пушель", "Пяточок"));
     }
 
-    private void initializePersons(){
-        pyatachok = new Animal(new FIO("Генри", "Пушель-Пятачок"));
+    private void initializeSkillsActions() {
+        skillsActions = new HashMap<>();
+        // Бег
+        Changeable<Double, Double> runChanges = ((speed, mult) -> speed *= mult);
+        skillsActions.put("run", runChanges);
+        // Добавление цветов
+        Changeable<HashSet<Color>, ArrayList<Color>> addColors = ((before, changes) -> {
+            before.addAll(changes);
+            changes.clear();
+        });
+        skillsActions.put("addColors", addColors);
+        // Катиться
+        Changeable<Double, Double> rollChanges = ((speed, add) -> speed += add);
+        skillsActions.put("roll", rollChanges);
+        //прыгать
+        Changeable<Double, Double> jumpChanges = ((speed, add) -> speed *= Math.pow(add, 2));
+        skillsActions.put("jump", jumpChanges);
+        
     }
 
     private void initializeSkills(){

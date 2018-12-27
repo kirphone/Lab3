@@ -48,14 +48,14 @@ abstract class Person {
     }
 
     public void teachSkills(Person person, Skill ... newSkills) {
-        for (int i = 0; i < newSkills.length; ++i) {
-            if(skills.containsKey(newSkills[i].getName())){
+        for (Skill newSkill : newSkills) {
+            if (skills.containsKey(newSkill.getName())) {
                 System.out.printf("%s не получит новое умение %s, которое имеет %s, потому что он уже имеет его",
-                        person.getName(), newSkills[i].toString(), getName());
+                        person.getName(), newSkill.toString(), getName());
                 continue;
             }
-            person.addSkills(newSkills[i]);
-            person.teachers.put(newSkills[i], this);
+            person.addSkills(newSkill);
+            person.teachers.put(newSkill, this);
         }
     }
 

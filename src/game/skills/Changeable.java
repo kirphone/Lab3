@@ -2,5 +2,5 @@ package game.skills;
 
 @FunctionalInterface
 public interface Changeable<T1, T2> {
-    T1 change(T1 before, T2 changes);
+    void change(T1 before, T2 changes);
 }
