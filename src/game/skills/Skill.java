@@ -20,8 +20,8 @@ public class Skill<T1, T2> {
         subject = _subject;
     }
 
-    public Skill(String _name, T1 _target, Changeable<T1, T2> _action, T2 _changes){
-        this(_name, _target, _action, _changes, null, null);
+    public Skill(String _name, T1 _target, Changeable<T1, T2> _action, T2 _changes, MessageGenerator<T1, T2> _specialTextMessage){
+        this(_name, _target, _action, _changes, _specialTextMessage, null);
     }
 
     public Skill(String _name, T1 _target){
@@ -45,8 +45,12 @@ public class Skill<T1, T2> {
     }
 
     private void printSpecialTextMessage(){
-        String message = specialTextMessage.generate(subject, target, changes);
-        System.out.println(message);
+        try {
+            String message = specialTextMessage.generate(subject, target, changes);
+            System.out.println(message);
+        } catch (NullPointerException e){
+            System.out.println("Не задан Person для скилла, но используется при выводе сообщения");
+        }
     }
 
     public void setAction(Changeable<T1, T2> _action){
@@ -62,6 +66,10 @@ public class Skill<T1, T2> {
             printSpecialTextMessage();
         }
         action.change(target, changes);
+    }
+
+    public void setSubject(Person _subject){
+        subject = _subject;
     }
 
     public String toString(){

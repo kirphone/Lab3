@@ -8,12 +8,12 @@ public abstract class Person {
     private final FIO name;
     protected double speed;
     private Location currentLoc;
-    private Map<String, Skill> skills;
+    private Journey.SmartMap skills;
     protected Map<Skill, Person> teachers;
 
     Person(FIO _name) {
         name = _name;
-        skills = new HashMap<>();
+        skills = new Journey.SmartMap();
         teachers = new HashMap<>();
     }
 
@@ -42,8 +42,13 @@ public abstract class Person {
     }
 
     public void addSkills(Skill ... newSkills) {
+        addSkills((ArrayList<Skill>) Arrays.asList(newSkills));
+    }
+
+    public void addSkills(ArrayList<Skill> newSkills) {
         for(Skill i : newSkills){
-            skills.put(i.getName(), i);
+            skills.put(i);
+            skills.get(i.getName()).setSubject(this);
         }
     }
 
