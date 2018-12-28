@@ -19,6 +19,10 @@ class FIO {
 
     @Override
     public String toString() {
+        if(firstName.equals(""))
+            return secondName;
+        if(secondName.equals(""))
+            return firstName;
         return firstName + " " + secondName;
     }
 

@@ -2,30 +2,38 @@ package game.skills;
 
 import game.Person;
 
+import java.lang.reflect.Field;
+
 public class Skill<T1, T2> {
     private T1 target;
     private T2 changes;
     private String name;
+    private String targetField;
     private MessageGenerator<T1, T2> specialTextMessage;
     private Changeable<T1, T2> action;
     private Person subject;
 
     public Skill(String _name, T1 _target, Changeable<T1, T2> _action, T2 _changes,
-                 MessageGenerator<T1, T2> _specialTextMessage, Person _subject){
+                 MessageGenerator<T1, T2> _specialTextMessage){
         name = _name;
         target = _target;
         action = _action;
         changes = _changes;
         specialTextMessage = _specialTextMessage;
-        subject = _subject;
     }
 
-    public Skill(String _name, T1 _target, Changeable<T1, T2> _action, T2 _changes, MessageGenerator<T1, T2> _specialTextMessage){
-        this(_name, _target, _action, _changes, _specialTextMessage, null);
+    public Skill(String _name, String _targetField, Changeable<T1, T2> _action, T2 _changes,
+                 MessageGenerator<T1, T2> _specialTextMessage){
+        this(_name, (T1)null, _action, _changes, _specialTextMessage);
+        targetField = _targetField;
     }
 
     public Skill(String _name, T1 _target){
-        this(_name, _target, null, null, null, null);
+        this(_name, _target, null, null, null);
+    }
+
+    public Skill(String _name, MessageGenerator<T1, T2> _specialTextMessage){
+        this(_name, (T1)null, null, null, _specialTextMessage);
     }
 
     public void setTarget(T1 _target){
@@ -62,14 +70,27 @@ public class Skill<T1, T2> {
     }
 
     public void perform(){
-        if(specialTextMessage != null) {
-            printSpecialTextMessage();
+        try {
+            action.change(target, changes);
+        } catch (Exception ignored) {}
+        finally {
+            if(specialTextMessage != null) {
+                printSpecialTextMessage();
+            }
         }
-        action.change(target, changes);
     }
 
     public void setSubject(Person _subject){
         subject = _subject;
+        if(targetField != null){
+            try {
+                Field f = Person.class.getDeclaredField(targetField);
+                f.setAccessible(true);
+                setTarget((T1)f.get(subject));
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public String toString(){
