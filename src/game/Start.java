@@ -3,6 +3,10 @@ package game;
 public class Start {
     public static void main(String[] args) {
         Journey game = new Journey();
-        game.start();
+        try {
+            game.start();
+        } catch (ParametersNullException e) {
+            e.printStackTrace();
+        }
     }
 }

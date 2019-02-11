@@ -11,6 +11,7 @@ public abstract class Person {
     private Journey.SmartMap skills;
     private MutableDouble points;
     protected Map<Skill, Person> teachers;
+    private Journey.SmartMap possibleSkills;
 
     Person(FIO _name) {
         name = _name;
@@ -18,6 +19,7 @@ public abstract class Person {
         teachers = new HashMap<>();
         speed = new MutableDouble(1.0d);
         points = new MutableDouble(100.0d);
+        possibleSkills = new Journey.SmartMap();
     }
 
     Person(FIO _name, Location _startPosition) {
@@ -25,11 +27,11 @@ public abstract class Person {
         currentLoc = _startPosition;
     }
 
-    public void doSkill(String skillName) {
+    public void doSkill(String skillName) throws ParametersNullException {
         if (skills.containsKey(skillName)) {
             skills.get(skillName).perform();
         } else{
-            throw new SkillNotFound(this, skillName);
+            throw new SkillNotFoundException(this, skillName);
         }
     }
 
@@ -63,6 +65,16 @@ public abstract class Person {
         ArrayList<Skill> operands = new ArrayList<>();
         Collections.addAll(operands, newSkills);
         addSkills(operands);
+    }
+
+    public void addPossibleSkill(Skill ... skills){
+        for (Skill skill : skills) {
+            possibleSkills.put(skill);
+        }
+    }
+
+    public Journey.SmartMap getPossibleSkills(){
+        return possibleSkills;
     }
 
     public void addSkills(ArrayList<Skill> newSkills) {

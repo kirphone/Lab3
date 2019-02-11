@@ -23,4 +23,19 @@ public class Song {
     }
 
     public String getText() {return text.toString(); }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Song && ((Song) obj).getName().equals(name);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Песня под именем %s", name);
+    }
 }

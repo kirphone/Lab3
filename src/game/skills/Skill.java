@@ -1,5 +1,6 @@
 package game.skills;
 
+import game.ParametersNullException;
 import game.Person;
 
 import java.lang.reflect.Field;
@@ -69,13 +70,16 @@ public class Skill<T1, T2> {
         changes = _changes;
     }
 
-    public void perform(){
-        try {
-            action.change(target, changes);
-        } catch (Exception ignored) {}
-        finally {
-            if(specialTextMessage != null) {
+    public void perform() throws ParametersNullException {
+        if(target == null && changes != null || target != null && changes == null){
+            throw new ParametersNullException(this);
+        }
+        else {
+            try {
+                action.change(target, changes);
                 printSpecialTextMessage();
+            } catch (NullPointerException ignored){
+
             }
         }
     }

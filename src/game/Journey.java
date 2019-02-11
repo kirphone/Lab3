@@ -15,7 +15,7 @@ class Journey {
         addSkills();
     }
 
-    public void start() {
+    public void start() throws ParametersNullException {
         pyatachok.doSkill("openAndCloseMouth");
         pyatachok.doSkill("treat");
         kenga.sayTo(pyatachok, "рыбий жир очень, очень вкусный, когда к нему как следует привыкнешь.");
@@ -50,7 +50,7 @@ class Journey {
         puch.doSkill("composeMusic");
         puch.doSkill("scratchHead");
         puch.think("Начало просто замечательное, но где же взять вторую строчку?");
-        puch.sayTo(puch, "Ура Ура Ура");
+        //puch.sayTo(puch, "Ура Ура Ура");
         puch.getSkill("composeMusic").setChanges("Хорошо быть медведем, ого!");
         puch.doSkill("composeMusic");
 
@@ -165,6 +165,15 @@ class Journey {
         kenga.addSkills(skills.get("jump"));
         puch.addSkills(skills.get("composeMusic"));
         puch.addSkills(skills.get("scratchHead"));
+    }
+
+    private void addPosibleSkill(Person p, String name){
+        SmartMap skills = p.getPossibleSkills();
+        if(skills.size() == 0)
+            return;
+        if(new Random().nextInt(10) <= 3){
+            p.addSkills(skills.get(name));
+        }
     }
 
     @Override
