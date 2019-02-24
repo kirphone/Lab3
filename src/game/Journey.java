@@ -5,7 +5,7 @@ import game.skills.MessageGenerator;
 import game.skills.Skill;
 import java.util.*;
 
-class Journey {
+public class Journey {
 
     private Person pyatachok, kenga, robin, kroshka, puch, rabbit, bear;
     private SmartMap skills;
