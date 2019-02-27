@@ -88,15 +88,15 @@ public class Journey {
             class MutableBoolean {
                 private boolean value;
 
-                MutableBoolean(boolean _value) {
+                private MutableBoolean(boolean _value) {
                     value = _value;
                 }
 
-                public boolean getValue() {
+                private boolean getValue() {
                     return value;
                 }
 
-                public void setValue(boolean _value) {
+                private void setValue(boolean _value) {
                     value = _value;
                 }
             }
@@ -137,7 +137,7 @@ public class Journey {
             };
             ArrayList<Color> allColors = new ArrayList<>(Arrays.asList(Color.values()));
             allColors.remove(0);
-            skills.put(new Skill<>("addColors", new HashSet<Color>(),
+            skills.put(new Skill<>("addColors", new HashSet<>(),
                     addColorsChanges, allColors, addColorsMessage));
             // Катиться
             Changeable<MutableDouble, Double> rollChanges = ((speed, add) -> speed.setValue(speed.getValue() + add));

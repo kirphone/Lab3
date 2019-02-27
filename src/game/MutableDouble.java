@@ -1,6 +1,6 @@
 package game;
 
-public class MutableDouble {
+public class MutableDouble implements Comparable<MutableDouble> {
     private double value;
 
     public MutableDouble(double _value) {
@@ -13,5 +13,10 @@ public class MutableDouble {
 
     public void setValue(double _value) {
         value = _value;
+    }
+
+    @Override
+    public int compareTo(MutableDouble mutableDouble) {
+        return Double.compare(this.getValue(), mutableDouble.getValue());
     }
 }

@@ -4,13 +4,13 @@ import game.skills.*;
 
 import java.util.*;
 
-public abstract class Person {
+public abstract class Person implements Comparable<Person> {
     private FIO name;
-    protected MutableDouble speed;
+    private MutableDouble speed;
     private Location currentLoc;
     private Journey.SmartMap skills;
     private MutableDouble points;
-    protected Map<Skill, Person> teachers;
+    private Map<Skill, Person> teachers;
     private Journey.SmartMap possibleSkills;
 
     Person(FIO _name) {
@@ -27,7 +27,7 @@ public abstract class Person {
         currentLoc = _startPosition;
     }
 
-    public void doSkill(String skillName) throws ParametersNullException {
+    void doSkill(String skillName) throws ParametersNullException {
         if (skills.containsKey(skillName)) {
             skills.get(skillName).perform();
         } else{
@@ -43,21 +43,21 @@ public abstract class Person {
         return speed.getValue();
     }
 
-    public void stop() {
+    void stop() {
         speed.setValue(0.0d);
     }
 
-    public void goToFriend(Person friend) {
+    void goToFriend(Person friend) {
         currentLoc = friend.currentLoc;
         System.out.println(name + " теперь проводит время вместе с " + friend.getName().toString());
     }
 
-    public void goToPlace(Location loc) {
+    void goToPlace(Location loc) {
         currentLoc = loc;
         System.out.println(name + " теперь находится в месте " + loc.toString());
     }
 
-    public void think(String text){
+    void think(String text){
         System.out.printf("%s подумал: %s\n", this.getName().toString(), text);
     }
 
@@ -73,11 +73,11 @@ public abstract class Person {
         }
     }
 
-    public Journey.SmartMap getPossibleSkills(){
+    Journey.SmartMap getPossibleSkills(){
         return possibleSkills;
     }
 
-    public void addSkills(ArrayList<Skill> newSkills) {
+    void addSkills(ArrayList<Skill> newSkills) {
         for (Skill i : newSkills) {
             if (skills.containsKey(i.getName())) {
                 System.out.printf("%s не получит новое умение %s, потому что он уже имеет его",
@@ -90,23 +90,44 @@ public abstract class Person {
         }
     }
 
-    public void teachSkills(Person person, Skill... newSkills) {
+    void teachSkills(Person person, Skill... newSkills) {
         person.addSkills(newSkills);
         for (Skill i : newSkills) {
             person.teachers.put(i, this);
         }
     }
 
-    public void sayTo(Person p, String message) {
+    void sayTo(Person p, String message) {
         System.out.printf("%s сказал %s : %s\n", this.name.toString(), p.name.toString(), message);
     }
 
-    public void changeName(FIO _name) {
+    void changeName(FIO _name) {
         name = _name;
     }
 
-    public Skill getSkill(String name){
+    Skill getSkill(String name){
         return skills.get(name);
+    }
+
+    public int getSkillsCount() { return skills.size(); }
+
+    public int getPossibleSkillsCount() { return possibleSkills.size(); }
+
+    @Override
+    public int compareTo(Person person) {
+        if(this.skills.size() > person.skills.size())
+            return 1;
+        else if(this.skills.size() < person.skills.size())
+            return -1;
+        else if(this.speed.compareTo(person.speed) != 0){
+            return this.speed.compareTo(person.speed);
+        }
+        else if(this.possibleSkills.size() > person.possibleSkills.size())
+            return 1;
+        else if(this.possibleSkills.size() < person.possibleSkills.size())
+            return -1;
+        else
+            return this.name.toString().compareTo(person.name.toString());
     }
 
     @Override

@@ -1,6 +1,6 @@
 package game;
 
-class FIO {
+public class FIO {
     private final String firstName;
     private final String secondName;
 
