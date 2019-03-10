@@ -52,6 +52,7 @@ public class CommandHandler {
         if (key == null) {
             throw new ReadKeyFromJsonException();
         }
+        return key;
     }
 
     private class ReadElementFromJsonException extends Exception {
