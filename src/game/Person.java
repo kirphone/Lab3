@@ -43,6 +43,10 @@ public abstract class Person implements Comparable<Person> {
         return speed.getValue();
     }
 
+    public MutableDouble getMutableSpeed() {
+        return speed;
+    }
+
     void stop() {
         speed.setValue(0.0d);
     }
@@ -113,19 +117,16 @@ public abstract class Person implements Comparable<Person> {
 
     public int getPossibleSkillsCount() { return possibleSkills.size(); }
 
+    public Location getCurrentLocation() { return currentLoc; }
+
     @Override
     public int compareTo(Person person) {
-        if(this.skills.size() > person.skills.size())
-            return 1;
-        else if(this.skills.size() < person.skills.size())
-            return -1;
-        else if(this.speed.compareTo(person.speed) != 0){
+        if(this.speed.compareTo(person.speed) != 0)
             return this.speed.compareTo(person.speed);
-        }
-        else if(this.possibleSkills.size() > person.possibleSkills.size())
-            return 1;
-        else if(this.possibleSkills.size() < person.possibleSkills.size())
-            return -1;
+        else if(this.currentLoc.compareTo(person.currentLoc) != 0)
+            return this.currentLoc.compareTo(person.currentLoc);
+        else if(this.skills.size() != person.skills.size())
+            return Integer.compare(this.skills.size(), person.skills.size());
         else
             return this.name.toString().compareTo(person.name.toString());
     }

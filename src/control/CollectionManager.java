@@ -1,8 +1,10 @@
 package control;
 
+import com.google.gson.Gson;
 import game.Person;
 
-import java.io.File;
+import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 class CollectionManager {
@@ -30,9 +32,9 @@ class CollectionManager {
      */
 
     public void info() {
-        System.out.println("Collection has type HashSet and contains Person objects.");
-        System.out.println("Initialization data is " + initDate);
-        System.out.printf("It contains %d elements\n", collection.size());
+        System.out.println("Коллекция имеет тип HashSet и содержит объекты класса Person");
+        System.out.println("Коллекция инициализировалась на основе следующих данных: " + initDate);
+        System.out.printf("Коллекция содержит %d элементов\n", collection.size());
     }
 
     /**
@@ -101,17 +103,12 @@ class CollectionManager {
      * @param importFile:(java.io.File) - file for reading
 
      */
-    /*
-    public void doImport(File importFile) {
 
+    public void importFile(File importFile) {
         try{
-
             if ((!(importFile.isFile()))) throw new FileNotFoundException("Ошибка. Указаный путь не ведёт к файлу");
-
             if (!(importFile.exists()))
-
                 throw new FileNotFoundException("Фаил коллекцией не найден. Добавьте элементы вручную или импортируйте из другого файла");
-
             if (!importFile.canRead()) throw new SecurityException("Доступ запрещён. Файл защищен от чтения");
 
             String JsonString = readJsonFromFile(importFile);
@@ -153,7 +150,7 @@ class CollectionManager {
      * @throws IOException - throws Input-Output Exceptions
 
      */
-/*
+
     private String readJsonFromFile(File fileForRead) throws IOException {
 
         try(
@@ -193,47 +190,25 @@ class CollectionManager {
      * Если сохранение в исходный фаил не удалось, то сохранение происходит в фаил с уникальным названием.
 
      */
-/*
+
     public void finishWork() {
-
         File saveFile = (fileForIO != null) ? fileForIO : new File("");
-
         Gson gson = new Gson();
-
-        try(BufferedOutputStream buffOutStr = new BufferedOutputStream(new FileOutputStream(saveFile))){
-
-            buffOutStr.write(gson.toJson(thingsTreeSet).getBytes());
-
-            buffOutStr.flush();
-
+        try(OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(saveFile))){
+            writer.write(gson.toJson(collection));
+            writer.flush();
             System.out.println("Коллекция сохранена в файл " + saveFile.getAbsolutePath());
-
         }catch (IOException | NullPointerException e){
-
-            Date d = new Date();
-
-            SimpleDateFormat formater = new SimpleDateFormat("yyyy.MM.dd.hh.mm.ss");
-
-            saveFile = new File("saveFile" + formater.format(d) + ".txt");
-
-            try(BufferedOutputStream buffOutStr = new BufferedOutputStream(new FileOutputStream(saveFile))) {
-
+            saveFile = new File("saveFile" + new SimpleDateFormat("yyyy.MM.dd.hh.mm.ss").format(new Date()) + ".txt");
+            try(OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(saveFile))) {
                 if (saveFile.createNewFile()) throw new IOException();
-
-                buffOutStr.write(gson.toJson(thingsTreeSet).getBytes());
-
-                buffOutStr.flush();
-
+                writer.write(gson.toJson(collection));
+                writer.flush();
                 System.out.println("Коллекция сохранена в файл " + saveFile.getAbsolutePath());
 
-            }catch (IOException ex){
-
+            } catch (IOException ex){
                 System.out.println("Сохранение коллекции не удалось");
-
             }
-
         }
-
     }
-    */
 }
