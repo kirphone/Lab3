@@ -1,6 +1,5 @@
 package control;
 
-import com.google.gson.Gson;
 import game.Person;
 
 import java.io.*;
@@ -15,8 +14,7 @@ class CollectionManager {
 
     CollectionManager(File collectionFile) {
         this();
-        if (collectionFile != null) {
-            importFile(collectionFile);
+        if (collectionFile != null && !importFile(collectionFile)){
             fileForIO = collectionFile;
         }
     }
@@ -25,6 +23,10 @@ class CollectionManager {
         fileForIO = null;
         initDate = new Date();
         collection = new HashMap<>();
+    }
+
+    public boolean isImported(){
+        return fileForIO != null;
     }
 
 
@@ -87,7 +89,7 @@ class CollectionManager {
     }
 
     /**
-     * Method adds item for storing collection.
+     * Метод добавляет элемент для хранения в коллекции
      *
      * @param key     : (String) - Insert key
      * @param element : (Person) - Object of class Person
@@ -96,7 +98,7 @@ class CollectionManager {
     public void insert(String key, Person element) {
         Person previous = collection.put(key, element);
         System.out.println("Элемент добавлен");
-        if (previous == null)
+        if (previous != null)
             System.out.println("Прежний элемент по данному ключу потерян");
     }
     /**
@@ -104,7 +106,7 @@ class CollectionManager {
      * @param importFile:(java.io.File) - file for reading
      */
 
-    public void importFile(File importFile) {
+    public boolean importFile(File importFile) {
         try{
             if ((!(importFile.isFile()))) throw new FileNotFoundException("Ошибка. Указаный путь не ведёт к файлу.");
             if (!(importFile.exists()))
@@ -114,11 +116,16 @@ class CollectionManager {
             boolean res = readCSVFromFile(importFile);
             if (!res){
                 System.out.println("Добавлены все элементы из файла");
-            }else System.out.println("Ничего не добавлено, возможно импортируемая коллекция пуста, или элементы заданы неверно");
+            }else {
+                System.out.println("Ничего не добавлено, возможно импортируемая коллекция пуста, или элементы заданы неверно");
+            }
+            return false;
         }catch (FileNotFoundException | SecurityException ex){
             System.out.println(ex.getMessage());
+            return true;
         } catch (IOException ex){
             System.out.println("Непредвиденная ошибка ввода: " + ex.toString());
+            return true;
         }
     }
 

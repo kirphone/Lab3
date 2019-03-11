@@ -13,7 +13,7 @@ public abstract class Person implements Comparable<Person> {
     private Map<Skill, Person> teachers;
     private Journey.SmartMap possibleSkills;
 
-    Person(FIO _name) {
+    public Person(FIO _name) {
         name = _name;
         skills = new Journey.SmartMap();
         teachers = new HashMap<>();
@@ -22,9 +22,18 @@ public abstract class Person implements Comparable<Person> {
         possibleSkills = new Journey.SmartMap();
     }
 
-    Person(FIO _name, Location _startPosition) {
+    public Person(FIO _name, Location _startPosition) {
         this(_name);
         currentLoc = _startPosition;
+    }
+
+    public Person(FIO _name, Location _startPosition, double speed) {
+        this(_name, _startPosition);
+        setSpeed(speed);
+    }
+
+    public Person(){
+        this(null);
     }
 
     void doSkill(String skillName) throws ParametersNullException {
@@ -128,7 +137,7 @@ public abstract class Person implements Comparable<Person> {
             return this.speed.compareTo(person.speed);
         else if(this.currentLoc.compareTo(person.currentLoc) != 0)
             return this.currentLoc.compareTo(person.currentLoc);
-        else if(this.skills.size() != person.skills.size())
+        else if(this.skills != null && person.skills != null && this.skills.size() != person.skills.size())
             return Integer.compare(this.skills.size(), person.skills.size());
         else
             return this.name.toString().compareTo(person.name.toString());

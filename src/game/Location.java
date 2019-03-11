@@ -4,31 +4,31 @@ public enum Location {
     FORREST {
         @Override
         public String toString() {
-            return "Лес";
+            return "FORREST";
         }
     },
     PYATACHOKHOME{
         @Override
         public String toString() {
-            return "Дом Пятачка";
+            return "PYATACHOKHOME";
         }
     },
     RABBITHOME{
         @Override
         public String toString() {
-            return "Дом Кролика";
+            return "RABBITHOME";
         }
     },
     PUCHHOME{
         @Override
         public String toString() {
-            return "Дом Пуха";
+            return "PUCHHOME";
         }
     },
     ROBINHOME{
         @Override
         public String toString() {
-            return "Дом Кристофера Робина";
+            return "ROBINHOME";
         }
-    };
+    }
 }

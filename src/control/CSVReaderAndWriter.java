@@ -14,7 +14,7 @@ public class CSVReaderAndWriter {    //порядок в csv файле: name, s
     String write(HashMap<String, Person> collection){
         StringBuilder csvFormat = new StringBuilder();
 
-        collection.forEach((key, value) -> csvFormat.append(value.getName().toString().replace(" ", "_"))
+        collection.forEach((key, value) -> csvFormat.append(key).append(",").append(value.getName().toString().replace(" ", "_"))
                 .append(",").append(value.getSpeed()).append(",").append(value.getCurrentLocation()).append("\n"));
 
         return csvFormat.toString();
@@ -31,21 +31,21 @@ public class CSVReaderAndWriter {    //порядок в csv файле: name, s
     boolean read(List<String> lines, HashMap<String, Person> collection){
         for (String str : lines) {
             try {
-                String[] fields = str.split(",", 3);
-                if (fields.length != 3) {
+                String[] fields = str.split(",", 4);
+                if (fields.length != 4) {
                     throw new CSVReadException();
                 } else {
                     FIO name;
-                    var splitter = fields[0].split("_", 2);
+                    String[] splitter = fields[1].split("_", 2);
                     if (splitter.length == 2)
                         name = new FIO(splitter[0], splitter[1]);
                     else if (splitter.length == 1)
                         name = new FIO(splitter[0], null);
                     else
                         throw new CSVReadException();
-                    Person p = new Animal(name, Location.values()[Integer.parseInt(fields[2])]);
-                    p.setSpeed(Integer.parseInt(fields[1]));
-                    collection.put(name.toString().replace(" ", "_"), p);
+                    Person p = new Animal(name, Location.valueOf(fields[3]));
+                    p.setSpeed(Double.parseDouble(fields[2]));
+                    collection.put(fields[0], p);
                 }
             } catch (CSVReadException e) {
                 System.out.println(e.toString());

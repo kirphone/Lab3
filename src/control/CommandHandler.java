@@ -2,6 +2,7 @@ package control;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import game.Animal;
 import game.Person;
 
 import java.util.NoSuchElementException;
@@ -39,7 +40,7 @@ public class CommandHandler {
     }
 
     private Person getElementFromJSON(Gson gson, String elementInString) throws ReadElementFromJsonException, JsonSyntaxException {
-        Person element = gson.fromJson(elementInString, Person.class);
+        Person element = gson.fromJson(elementInString, Animal.class);
         if (element == null || element.getName() == null || element.getMutableSpeed() == null
                 || element.getCurrentLocation() == null) {
             throw new ReadElementFromJsonException();
@@ -87,7 +88,7 @@ public class CommandHandler {
                         case "remove":
                         case "remove_greater_key":
                             try {
-                                String key = getKeyFromJSON(gson, fullCommand[0]);
+                                String key = getKeyFromJSON(gson, fullCommand[1]);
                                 switch (fullCommand[0]) {
                                     case "remove":
                                         manager.remove(key);
@@ -131,7 +132,7 @@ public class CommandHandler {
                                 Person element = getElementFromJSON(gson, args[1]);
                                 manager.insert(key, element);
                             } catch (JsonSyntaxException ex) {
-                                System.out.println("Ошибка, элемент задан неверно. Используйте формат JSON.");
+                                System.out.println("Ошибка, элемент задан неверно. Используйте формат JSON.\n" + ex.toString());
                             } catch (ReadElementFromJsonException ex) {
                                 System.out.print(ex.toString());
                             } catch (ReadKeyFromJsonException ex) {
