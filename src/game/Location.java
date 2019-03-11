@@ -1,6 +1,6 @@
 package game;
 
-enum Location {
+public enum Location {
     FORREST {
         @Override
         public String toString() {

@@ -42,6 +42,9 @@ public abstract class Person implements Comparable<Person> {
     public double getSpeed() {
         return speed.getValue();
     }
+    public void setSpeed(double _speed) {
+        speed.setValue(_speed);
+    }
 
     public MutableDouble getMutableSpeed() {
         return speed;

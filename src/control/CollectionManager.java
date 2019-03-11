@@ -6,6 +6,7 @@ import game.Person;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 class CollectionManager {
     private HashMap<String, Person> collection;
@@ -15,7 +16,7 @@ class CollectionManager {
     CollectionManager(File collectionFile) {
         this();
         if (collectionFile != null) {
-            //doImport(collectionFile);
+            importFile(collectionFile);
             fileForIO = collectionFile;
         }
     }
@@ -31,7 +32,7 @@ class CollectionManager {
      * Выводит информацию о коллекции
      */
 
-    public void info() {
+    void info() {
         System.out.println("Коллекция имеет тип HashSet и содержит объекты класса Person");
         System.out.println("Коллекция инициализировалась на основе следующих данных: " + initDate);
         System.out.printf("Коллекция содержит %d элементов\n", collection.size());
@@ -43,7 +44,7 @@ class CollectionManager {
      * @param key : (Things) - Remove key
      */
 
-    public void remove(String key) {
+    void remove(String key) {
         if (collection.remove(key) != null)
             System.out.println("Элемент удалён");
         else
@@ -101,108 +102,56 @@ class CollectionManager {
     /**
      * Method imports items for storing collection from file.
      * @param importFile:(java.io.File) - file for reading
-
      */
 
     public void importFile(File importFile) {
         try{
-            if ((!(importFile.isFile()))) throw new FileNotFoundException("Ошибка. Указаный путь не ведёт к файлу");
+            if ((!(importFile.isFile()))) throw new FileNotFoundException("Ошибка. Указаный путь не ведёт к файлу.");
             if (!(importFile.exists()))
                 throw new FileNotFoundException("Фаил коллекцией не найден. Добавьте элементы вручную или импортируйте из другого файла");
             if (!importFile.canRead()) throw new SecurityException("Доступ запрещён. Файл защищен от чтения");
 
-            String JsonString = readJsonFromFile(importFile);
-
-            if (!(Things.jsonToThingsTreeSet(JsonString).isEmpty())){
-
-                thingsTreeSet.addAll(Things.jsonToThingsTreeSet(JsonString));
-
-                System.out.println("Добавлены только полностью инициализированные элементы");
-
+            boolean res = readCSVFromFile(importFile);
+            if (!res){
+                System.out.println("Добавлены все элементы из файла");
             }else System.out.println("Ничего не добавлено, возможно импортируемая коллекция пуста, или элементы заданы неверно");
-
-        }catch (FileNotFoundException ex){
-
+        }catch (FileNotFoundException | SecurityException ex){
             System.out.println(ex.getMessage());
-
-        }catch (SecurityException ex){
-
-            System.out.println(ex.getMessage());
-
-        }catch (IOException ex){
-
-            System.out.println("Непредвиденная ошибка ввода: " + ex);
-
-        }catch (JsonSyntaxMistakeException ex){
-
-            System.out.println("Содержимое фаила имеет неверный формат, проверьте синтаксис он должен удовлетворять формату json, а после используйте команду import {Path} для повторной ошибки");
-
+        } catch (IOException ex){
+            System.out.println("Непредвиденная ошибка ввода: " + ex.toString());
         }
-
     }
 
     /**
-
      * @param fileForRead:(java.io.File) - file for reading
-
      * @return string in format json (serialized object)
-
      * @throws IOException - throws Input-Output Exceptions
-
      */
 
-    private String readJsonFromFile(File fileForRead) throws IOException {
-
-        try(
-
-                FileInputStream fileInpStream = new FileInputStream(fileForRead);
-
-                BufferedInputStream buffInpStream = new BufferedInputStream(fileInpStream);
-
-        ) {
-
-            LinkedList<Byte> collectionBytesList = new LinkedList<>();
-
-            while (buffInpStream.available() > 0) {
-
-                collectionBytesList.add((byte) buffInpStream.read());
-
-            }
-
-            char[] collectionChars = new char[collectionBytesList.size()];
-
-            for (int i = 0; i < collectionChars.length; i++) {
-
-                collectionChars[i] = (char) (byte) collectionBytesList.get(i);
-
-            }
-
-            return new String(collectionChars);
-
+    private boolean readCSVFromFile(File fileForRead) throws IOException {
+        try(InputStreamReader reader = new InputStreamReader(new FileInputStream(fileForRead))) {
+            List<String> allLines = new BufferedReader(reader).lines().collect(Collectors.toList());
+            return new CSVReaderAndWriter().read(allLines, collection);
         }
-
     }
 
     /**
-
      * Завершает работу с коллекцией элементов, сохраняя ее в фаил из которого она была считана.
-
      * Если сохранение в исходный фаил не удалось, то сохранение происходит в фаил с уникальным названием.
-
      */
 
-    public void finishWork() {
+    void finishWork() {              //порядок в csv файле: name, speed, currentLoc
         File saveFile = (fileForIO != null) ? fileForIO : new File("");
-        Gson gson = new Gson();
+        CSVReaderAndWriter csv = new CSVReaderAndWriter();
         try(OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(saveFile))){
-            writer.write(gson.toJson(collection));
+            writer.write(csv.write(collection));
             writer.flush();
             System.out.println("Коллекция сохранена в файл " + saveFile.getAbsolutePath());
         }catch (IOException | NullPointerException e){
             saveFile = new File("saveFile" + new SimpleDateFormat("yyyy.MM.dd.hh.mm.ss").format(new Date()) + ".txt");
             try(OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(saveFile))) {
                 if (saveFile.createNewFile()) throw new IOException();
-                writer.write(gson.toJson(collection));
+                writer.write(csv.write(collection));
                 writer.flush();
                 System.out.println("Коллекция сохранена в файл " + saveFile.getAbsolutePath());
 

@@ -71,77 +71,90 @@ public class CommandHandler {
     public void control() {
         while (!isStopped) {
             String[] fullCommand = readCommand();
-            if ((fullCommand[0].equals("insert") || fullCommand[0].equals("add_if_min") || fullCommand[0].equals("remove")
-                    || fullCommand[0].equals("remove_greater") || fullCommand[0].equals("remove_greater_key"))) {
-                if (fullCommand.length == 1) {
-                    System.out.println("Ошибка, команда " + fullCommand[0] + " должна иметь аргумент.");
-                    continue;
-                }
-                Gson gson = new Gson();
+            switch (fullCommand[0]) {
+                case "insert":
+                case "add_if_min":
+                case "remove":
+                case "remove_greater":
+                case "remove_greater_key":
+                    if (fullCommand.length == 1) {
+                        System.out.println("Ошибка, команда " + fullCommand[0] + " должна иметь аргумент.");
+                        continue;
+                    }
+                    Gson gson = new Gson();
 
-                if (fullCommand[0].equals("remove") || fullCommand[0].equals("remove_greater_key")) {
-                    try {
-                        String key = getKeyFromJSON(gson, fullCommand[0]);
-                        switch (fullCommand[0]) {
-                            case "remove":
-                                manager.remove(key);
-                                break;
-                            case "remove_greater_key":
-                                manager.removeGreaterKey(key);
-                                break;
-                        }
-                    } catch (JsonSyntaxException ex) {
-                        System.out.println("Ошибка, ключ задан неверно. Используйте формат JSON.");
-                        continue;
-                    } catch (ReadKeyFromJsonException ex) {
-                        System.out.print(ex.toString());
+                    switch (fullCommand[0]) {
+                        case "remove":
+                        case "remove_greater_key":
+                            try {
+                                String key = getKeyFromJSON(gson, fullCommand[0]);
+                                switch (fullCommand[0]) {
+                                    case "remove":
+                                        manager.remove(key);
+                                        break;
+                                    case "remove_greater_key":
+                                        manager.removeGreaterKey(key);
+                                        break;
+                                }
+                            } catch (JsonSyntaxException ex) {
+                                System.out.println("Ошибка, ключ задан неверно. Используйте формат JSON.");
+                            } catch (ReadKeyFromJsonException ex) {
+                                System.out.print(ex.toString());
+                            }
+                            break;
+                        case "remove_greater":
+                        case "add_if_min":
+                            try {
+                                Person element = getElementFromJSON(gson, fullCommand[1]);
+                                switch (fullCommand[0]) {
+                                    case "remove_greater":
+                                        manager.removeGreater(element);
+                                        break;
+                                    case "add_if_min":
+                                        manager.addIfMin(element);
+                                        break;
+                                }
+                            } catch (JsonSyntaxException ex) {
+                                System.out.println("Ошибка, элемент задан неверно. Используйте формат JSON.");
+                            } catch (ReadElementFromJsonException ex) {
+                                System.out.print(ex.toString());
+                            }
+                            break;
+                        case "insert":
+                            String[] args = fullCommand[1].split(" ", 2);
+                            if (args.length == 1) {
+                                System.out.println("Ошибка, команда " + fullCommand[0] + " должна иметь 2 аргумента.");
+                                continue;
+                            }
+                            try {
+                                String key = getKeyFromJSON(gson, args[0]);
+                                Person element = getElementFromJSON(gson, args[1]);
+                                manager.insert(key, element);
+                            } catch (JsonSyntaxException ex) {
+                                System.out.println("Ошибка, элемент задан неверно. Используйте формат JSON.");
+                            } catch (ReadElementFromJsonException ex) {
+                                System.out.print(ex.toString());
+                            } catch (ReadKeyFromJsonException ex) {
+                                System.out.print(ex.toString());
+                            }
+                            break;
                     }
-                } else if (fullCommand[0].equals("remove_greater") || fullCommand[0].equals("add_if_min")) {
-                    try {
-                        Person element = getElementFromJSON(gson, fullCommand[1]);
-                        switch (fullCommand[0]) {
-                            case "remove_greater":
-                                manager.removeGreater(element);
-                                break;
-                            case "add_if_min":
-                                manager.addIfMin(element);
-                                break;
-                        }
-                    } catch (JsonSyntaxException ex) {
-                        System.out.println("Ошибка, элемент задан неверно. Используйте формат JSON.");
-                        continue;
-                    } catch (ReadElementFromJsonException ex) {
-                        System.out.print(ex.toString());
-                    }
-                } else if (fullCommand[0].equals("insert")) {
-                    String[] args = fullCommand[1].split(" ", 2);
-                    if (args.length == 1) {
-                        System.out.println("Ошибка, команда " + fullCommand[0] + " должна иметь 2 аргумента.");
-                        continue;
-                    }
-                    try {
-                        String key = getKeyFromJSON(gson, args[0]);
-                        Person element = getElementFromJSON(gson, args[1]);
-                        manager.insert(key, element);
-                    } catch (JsonSyntaxException ex) {
-                        System.out.println("Ошибка, элемент задан неверно. Используйте формат JSON.");
-                        continue;
-                    } catch (ReadElementFromJsonException ex) {
-                        System.out.print(ex.toString());
-                    } catch (ReadKeyFromJsonException ex) {
-                        System.out.print(ex.toString());
-                    }
-                }
-            } else if (fullCommand[0].equals("info"))
-                manager.info();
-            else if (fullCommand[0].equals("show"))
-                manager.show();
-            else if (fullCommand[0].equals("stop")) {
-                manager.show();
-                isStopped = true;
-                manager.finishWork();
-            } else
-                System.out.println("Ошибка, Неизвестная команда.");
+                    break;
+                case "info":
+                    manager.info();
+                    break;
+                case "show":
+                    manager.show();
+                    break;
+                case "stop":
+                    manager.show();
+                    isStopped = true;
+                    manager.finishWork();
+                    break;
+                default:
+                    System.out.println("Ошибка, Неизвестная команда.");
+                    break;
+            }
         }
 
     }
