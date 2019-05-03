@@ -5,13 +5,13 @@ import game.FIO;
 import game.Location;
 import game.Person;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CSVReaderAndWriter {    //порядок в csv файле: name, speed, currentLoc
 
-    String write(HashMap<String, Person> collection){
+    String write(Map<String, Person> collection){
         StringBuilder csvFormat = new StringBuilder();
 
         collection.forEach((key, value) -> csvFormat.append(key).append(",").append(value.getName().toString().replace(" ", "_"))
@@ -28,7 +28,7 @@ public class CSVReaderAndWriter {    //порядок в csv файле: name, s
         }
     }
 
-    boolean read(List<String> lines, HashMap<String, Person> collection){
+    boolean read(List<String> lines, Map<String, Person> collection){
         for (String str : lines) {
             try {
                 String[] fields = str.split(",", 4);
