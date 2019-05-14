@@ -5,6 +5,7 @@ import game.FIO;
 import game.Location;
 import game.Person;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,8 +15,11 @@ public class CSVReaderAndWriter {    //порядок в csv файле: name, s
     String write(Map<String, Person> collection){
         StringBuilder csvFormat = new StringBuilder();
 
-        collection.forEach((key, value) -> csvFormat.append(key).append(",").append(value.getName().toString().replace(" ", "_"))
-                .append(",").append(value.getSpeed()).append(",").append(value.getCurrentLocation()).append("\n"));
+        collection.forEach((key, value) -> csvFormat.append(key).append(",")
+                .append(value.getName().toString().replace(" ", "_")).append(",")
+                .append(value.getSpeed()).append(",")
+                .append(value.getCurrentLocation()).append(",")
+                .append(value.getDateOfBirth().getTime()).append("\n"));
 
         return csvFormat.toString();
     }
@@ -31,8 +35,8 @@ public class CSVReaderAndWriter {    //порядок в csv файле: name, s
     boolean read(List<String> lines, Map<String, Person> collection){
         for (String str : lines) {
             try {
-                String[] fields = str.split(",", 4);
-                if (fields.length != 4) {
+                String[] fields = str.split(",", 5);
+                if (fields.length != 5) {
                     throw new CSVReadException();
                 } else {
                     FIO name;
@@ -43,7 +47,7 @@ public class CSVReaderAndWriter {    //порядок в csv файле: name, s
                         name = new FIO(splitter[0], null);
                     else
                         throw new CSVReadException();
-                    Person p = new Animal(name, Location.valueOf(fields[3]));
+                    Person p = new Animal(name, new Date(Long.parseLong(fields[4])), Location.valueOf(fields[3]));
                     p.setSpeed(Double.parseDouble(fields[2]));
                     collection.put(fields[0], p);
                 }

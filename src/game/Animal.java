@@ -1,5 +1,7 @@
 package game;
 
+import java.util.Date;
+
 public class Animal extends Person {
 
     public Animal(FIO _name) {
@@ -8,6 +10,10 @@ public class Animal extends Person {
 
     public Animal(FIO _name, Location _startPosition) {
         super(_name, _startPosition);
+    }
+
+    public Animal(FIO _name, Date _dateOfBirth, Location _startPosition) {
+        super(_name, _dateOfBirth, _startPosition);
     }
 
     @Override

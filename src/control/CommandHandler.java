@@ -1,6 +1,7 @@
 package control;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import game.Animal;
 import game.Person;
@@ -42,7 +43,7 @@ public class CommandHandler {
     private Person getElementFromJSON(Gson gson, String elementInString) throws ReadElementFromJsonException, JsonSyntaxException {
         Person element = gson.fromJson(elementInString, Animal.class);
         if (element == null || element.getName() == null || element.getMutableSpeed() == null
-                || element.getCurrentLocation() == null) {
+                || element.getCurrentLocation() == null || element.getDateOfBirth() == null) {
             throw new ReadElementFromJsonException();
         }
         return element;
@@ -59,7 +60,7 @@ public class CommandHandler {
     private class ReadElementFromJsonException extends Exception {
         public String toString() {
             return "Ошибка, элемент задан неверно, возможно вы указали не все значения.\n" +
-                    "Требуется указать следующие поля: name, speed, currentLoc.\n";
+                    "Требуется указать следующие поля: name, speed, currentLoc, dateOfBirth.\n";
         }
     }
 
@@ -82,7 +83,7 @@ public class CommandHandler {
                         System.out.println("Ошибка, команда " + fullCommand[0] + " должна иметь аргумент.");
                         continue;
                     }
-                    Gson gson = new Gson();
+                    Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 
                     switch (fullCommand[0]) {
                         case "remove":

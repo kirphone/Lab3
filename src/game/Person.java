@@ -12,34 +12,31 @@ public abstract class Person implements Comparable<Person> {
     private MutableDouble points;
     private Map<Skill, Person> teachers;
     private Journey.SmartMap possibleSkills;
+    private final Date dateOfBirth;
 
-    public Person(FIO _name) {
+    public Person(FIO _name, Date _dateOfBirth, Location _startPosition) {
         name = _name;
         skills = new Journey.SmartMap();
         teachers = new HashMap<>();
         speed = new MutableDouble(1.0d);
         points = new MutableDouble(100.0d);
         possibleSkills = new Journey.SmartMap();
-    }
-
-    public Person(FIO _name, Location _startPosition) {
-        this(_name);
+        dateOfBirth = _dateOfBirth;
         currentLoc = _startPosition;
     }
 
-    public Person(FIO _name, Location _startPosition, double speed) {
-        this(_name, _startPosition);
-        setSpeed(speed);
+    public Person(FIO _name, Location _startPosition){
+        this(_name, new Date(), _startPosition);
     }
 
-    public Person(){
-        this(null);
+    public Person(FIO _name){
+        this(_name, new Date(), null);
     }
 
     void doSkill(String skillName) throws ParametersNullException {
         if (skills.containsKey(skillName)) {
             skills.get(skillName).perform();
-        } else{
+        } else {
             throw new SkillNotFoundException(this, skillName);
         }
     }
@@ -48,9 +45,14 @@ public abstract class Person implements Comparable<Person> {
         return name;
     }
 
+    public Date getDateOfBirth() {
+        return dateOfBirth;
+    }
+
     public double getSpeed() {
         return speed.getValue();
     }
+
     public void setSpeed(double _speed) {
         speed.setValue(_speed);
     }
@@ -73,7 +75,7 @@ public abstract class Person implements Comparable<Person> {
         System.out.println(name + " теперь находится в месте " + loc.toString());
     }
 
-    void think(String text){
+    void think(String text) {
         System.out.printf("%s подумал: %s\n", this.getName().toString(), text);
     }
 
@@ -83,13 +85,13 @@ public abstract class Person implements Comparable<Person> {
         addSkills(operands);
     }
 
-    public void addPossibleSkill(Skill ... skills){
+    public void addPossibleSkill(Skill... skills) {
         for (Skill skill : skills) {
             possibleSkills.put(skill);
         }
     }
 
-    Journey.SmartMap getPossibleSkills(){
+    Journey.SmartMap getPossibleSkills() {
         return possibleSkills;
     }
 
@@ -121,24 +123,30 @@ public abstract class Person implements Comparable<Person> {
         name = _name;
     }
 
-    Skill getSkill(String name){
+    Skill getSkill(String name) {
         return skills.get(name);
     }
 
-    public int getSkillsCount() { return skills.size(); }
+    public int getSkillsCount() {
+        return skills.size();
+    }
 
-    public int getPossibleSkillsCount() { return possibleSkills.size(); }
+    public int getPossibleSkillsCount() {
+        return possibleSkills.size();
+    }
 
-    public Location getCurrentLocation() { return currentLoc; }
+    public Location getCurrentLocation() {
+        return currentLoc;
+    }
 
     @Override
     public int compareTo(Person person) {
-        if(this.speed.compareTo(person.speed) != 0)
+        if (this.speed.compareTo(person.speed) != 0)
             return this.speed.compareTo(person.speed);
-        else if(this.currentLoc.compareTo(person.currentLoc) != 0)
+        else if (this.currentLoc.compareTo(person.currentLoc) != 0)
             return this.currentLoc.compareTo(person.currentLoc);
-        else if(this.skills != null && person.skills != null && this.skills.size() != person.skills.size())
-            return Integer.compare(this.skills.size(), person.skills.size());
+        else if (dateOfBirth.compareTo(person.getDateOfBirth()) != 0)
+            return dateOfBirth.compareTo(getDateOfBirth());
         else
             return this.name.toString().compareTo(person.name.toString());
     }

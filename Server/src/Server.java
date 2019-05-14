@@ -2,20 +2,29 @@ import control.CollectionManager;
 import control.CommandHandler;
 
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
 
 public class Server {
 
-    ServerSocket serverSocket;
-    Socket connectSocket;
+    private DatagramSocket datagramSocket;
 
-    public Server(){
-        try {
-            serverSocket = new ServerSocket(8888);         // serverSocket будет принимать соединения на заданный порт
-            connectSocket = serverSocket.accept();  //ожидание соединения с клиентом и получение сокета для коммуникации с клиентом.
-        } catch (IOException e) {
-            e.printStackTrace();
+    public Server(int port) throws IOException{
+        datagramSocket = new DatagramSocket();
+        datagramSocket.connect(InetAddress.getLocalHost(), port);
+
+        System.out.println("Сервер запущен");
+        System.out.println("IP: " + datagramSocket.getLocalAddress());
+    }
+
+    private void listen() throws IOException{
+        while(true){
+            byte[] ib = new byte[256];
+
+            DatagramPacket ip = new DatagramPacket(ib, ib.length);
+            datagramSocket.receive(ip);
+
         }
     }
+
+
 }

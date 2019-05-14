@@ -95,8 +95,8 @@ public class CollectionManager {
 
     public void addIfMin(Person element) {
         if(collection.values().stream().allMatch(a -> a.compareTo(element) > 0)){
-            insert(element.getName().toString(), element);
-            System.out.println("Элемент добавлен");
+            insert(element.getName().toString().replace(" ", "_"), element);
+            //System.out.println("Элемент добавлен");
         } else{
             System.out.println("Элемент не добавлен");
         }
