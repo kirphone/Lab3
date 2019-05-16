@@ -68,17 +68,14 @@ public class CommandHandler {
                             switch (fullCommand[0]) {
                                 case "remove":
                                     return manager.remove(key) ? "Элемент удалён" : "Коллекция не содержит данный элемент";
-                                    break;
                                 case "remove_greater_key":
                                     return String.format("Удалено %d элементов\n", manager.removeGreaterKey(key));
-                                    break;
                             }
                         } catch (JsonSyntaxException ex) {
                             return "Ошибка, ключ задан неверно. Используйте формат JSON.";
                         } catch (ReadKeyFromJsonException ex) {
                             return ex.toString();
                         }
-                        break;
                     case "remove_greater":
                     case "add_if_min":
                         try {
@@ -86,17 +83,14 @@ public class CommandHandler {
                             switch (fullCommand[0]) {
                                 case "remove_greater":
                                     return String.format("Удалено %d элементов\n", manager.removeGreater(element));
-                                    break;
                                 case "add_if_min":
                                     return manager.addIfMin(element) ? "Элемент добавлен" : "Элемент не добавлен";
-                                    break;
                             }
                         } catch (JsonSyntaxException ex) {
                             return "Ошибка, элемент задан неверно. Используйте формат JSON.";
                         } catch (ReadElementFromJsonException ex) {
                             return ex.toString();
                         }
-                        break;
                     case "insert":
                         String[] args = fullCommand[1].split(" ", 2);
                         if (args.length == 1) {
@@ -106,27 +100,25 @@ public class CommandHandler {
                             String key = getKeyFromJSON(gson, args[0]);
                             Person element = getElementFromJSON(gson, args[1]);
                             manager.insert(key, element);
+                            return "Элемент добавлен";
                         } catch (JsonSyntaxException ex) {
                             return "Ошибка, элемент задан неверно. Используйте формат JSON.\n" + ex.toString();
                         } catch (ReadElementFromJsonException | ReadKeyFromJsonException ex) {
                             return ex.toString();
                         }
-                        break;
                 }
                 break;
             case "info":
                 return manager.info();
-                break;
             case "show":
                 return manager.show();
-                break;
-            case "stop_server":
+            /*case "stop_server":
                 manager.show();
                 manager.finishWork();
-                break;
+                break;*/
             default:
                 return "Ошибка, Неизвестная команда.";
-                break;
         }
+        return null;
     }
 }

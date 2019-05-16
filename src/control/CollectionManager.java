@@ -68,7 +68,7 @@ public class CollectionManager {
     /**
      * Метод удаляет из коллекции все элементы, ключ которых превышает заданный
      *
-     * @param key     : (String) - remove key
+     * @param key : (String) - remove key
      */
 
     public int removeGreaterKey(String key) {
@@ -84,10 +84,10 @@ public class CollectionManager {
      */
 
     public boolean addIfMin(Person element) {
-        if(collection.values().stream().allMatch(a -> a.compareTo(element) > 0)){
+        if (collection.values().stream().allMatch(a -> a.compareTo(element) > 0)) {
             insert(element.getName().toString().replace(" ", "_"), element);
             return true;
-        } else{
+        } else {
             return false;
         }
     }
@@ -109,30 +109,21 @@ public class CollectionManager {
      * @param importFile:(java.io.File) - файл для чтения
      */
 
-    public boolean importFile(File importFile) {
-        try {
-            if (!importFile.isFile() && !importFile.createNewFile()){
-                throw new FileNotFoundException("Ошибка. Указаный путь не ведёт к файлу, " +
-                        "и файл с таким названием не может быть создан");
-            }
-         //   if (!(importFile.exists()))
-          //      throw new FileNotFoundException("Фаил коллекцией не найден. Добавьте элементы вручную или импортируйте из другого файла");
-            if (!importFile.canRead()) throw new SecurityException("Доступ запрещён. Файл защищен от чтения");
+    public String importFile(File importFile) throws IOException {
+        if (!importFile.isFile() && !importFile.createNewFile()) {
+            throw new FileNotFoundException("Ошибка. Указаный путь не ведёт к файлу, " +
+                    "и файл с таким названием не может быть создан");
+        }
+        //   if (!(importFile.exists()))
+        //      throw new FileNotFoundException("Фаил коллекцией не найден. Добавьте элементы вручную или импортируйте из другого файла");
+        if (!importFile.canRead()) throw new SecurityException("Доступ запрещён. Файл защищен от чтения");
 
-            boolean res = readCSVFromFile(importFile);
-            if (!res) {
-                System.out.println("Добавлены все элементы из файла");
-            } else {
-                System.out.println("Ничего не добавлено, возможно импортируемая коллекция пуста, или элементы заданы неверно");
-            }
-            fileForIO = importFile;
-            return false;
-        } catch (FileNotFoundException | SecurityException ex) {
-            System.out.println(ex.getMessage());
-            return true;
-        } catch (IOException ex) {
-            System.out.println("Непредвиденная ошибка ввода: " + ex.toString());
-            return true;
+        boolean res = readCSVFromFile(importFile);
+        fileForIO = importFile;
+        if (!res) {
+            return "Добавлены все элементы из файла";
+        } else {
+            return "Ничего не добавлено, возможно импортируемая коллекция пуста, или элементы заданы неверно";
         }
     }
 
@@ -153,23 +144,23 @@ public class CollectionManager {
      * Если сохранение в исходный фаил не удалось, то сохранение происходит в фаил с уникальным названием.
      */
 
-    void finishWork() {              //порядок в csv файле: name, speed, currentLoc
+    String finishWork() {              //порядок в csv файле: name, speed, currentLoc, dateOfBirth
         File saveFile = (fileForIO != null) ? fileForIO : new File("");
         CSVReaderAndWriter csv = new CSVReaderAndWriter();
         try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(saveFile))) {
             writer.write(csv.write(collection));
             writer.flush();
-            System.out.println("Коллекция сохранена в файл " + saveFile.getAbsolutePath());
+            return "Коллекция сохранена в файл " + saveFile.getAbsolutePath();
         } catch (IOException | NullPointerException e) {
             saveFile = new File("saveFile" + new SimpleDateFormat("yyyy.MM.dd.hh.mm.ss").format(new Date()) + ".txt");
             try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(saveFile))) {
                 if (saveFile.createNewFile()) throw new IOException();
                 writer.write(csv.write(collection));
                 writer.flush();
-                System.out.println("Коллекция сохранена в файл " + saveFile.getAbsolutePath());
+                return "Коллекция сохранена в файл " + saveFile.getAbsolutePath();
 
             } catch (IOException ex) {
-                System.out.println("Сохранение коллекции не удалось");
+                return "Сохранение коллекции не удалось";
             }
         }
     }

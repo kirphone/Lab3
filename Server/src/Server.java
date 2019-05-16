@@ -17,7 +17,8 @@ public class Server {
         datagramSocket.connect(InetAddress.getLocalHost(), port);
 
         collectionManager = new CollectionManager();
-        collectionManager.importFile(importFile);
+
+        System.out.println(collectionManager.importFile(importFile));
 
         System.out.println("Сервер запущен");
         System.out.println("IP: " + datagramSocket.getLocalAddress());
@@ -27,6 +28,8 @@ public class Server {
         while(true){
             DatagramPacket ip = new DatagramPacket(new byte[4096], 4096);
             datagramSocket.receive(ip);
+
+
 
             ResponseThread thread = new ResponseThread(datagramSocket, ip, collectionManager);
             thread.start();

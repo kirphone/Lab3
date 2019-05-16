@@ -24,7 +24,7 @@ public class ResponseThread extends Thread {
 
     public void run(){
 
-        handler.doCommand(new String(inDatagramPacket.getData()));
+        String actions = handler.doCommand(new String(inDatagramPacket.getData()));
 
 
         DatagramPacket outDatagramPacket = new DatagramPacket(new byte[4096], 4096,
