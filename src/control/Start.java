@@ -8,7 +8,7 @@ public class Start {
             System.out.println("Путь до файла должен задаваться с помощью аргумента командной строки");
         }
         else {
-            CollectionManager manager = new CollectionManager(new File(args[0]));
+            CollectionManager manager = new CollectionManager();
             if(manager.isImported()){
                 CommandHandler handler = new CommandHandler(manager);
                 //handler.control();

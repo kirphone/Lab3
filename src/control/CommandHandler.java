@@ -50,25 +50,25 @@ public class CommandHandler {
         }
     }
 
-    public String doCommand(String command) {
-        String[] fullCommand = command.trim().split(" ", 2);
-        switch (fullCommand[0]) {
+    public String doCommand(String _command) {
+        Command command = new Command(_command);
+        switch (command.getName()) {
             case "insert":
             case "add_if_min":
             case "remove":
             case "remove_greater":
             case "remove_greater_key":
-                if (fullCommand.length == 1) {
-                    return "Ошибка, команда " + fullCommand[0] + " должна иметь аргумент.";
+                if (command.getSize() == 1) {
+                    return "Ошибка, команда " + command.getName() + " должна иметь аргумент.";
                 }
                 Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 
-                switch (fullCommand[0]) {
+                switch (command.getName()) {
                     case "remove":
                     case "remove_greater_key":
                         try {
-                            String key = getKeyFromJSON(gson, fullCommand[1]);
-                            switch (fullCommand[0]) {
+                            String key = getKeyFromJSON(gson, command.getBody());
+                            switch (command.getName()) {
                                 case "remove":
                                     return manager.remove(key) ? "Элемент удалён" : "Коллекция не содержит данный элемент";
                                 case "remove_greater_key":
@@ -82,8 +82,8 @@ public class CommandHandler {
                     case "remove_greater":
                     case "add_if_min":
                         try {
-                            Person element = getElementFromJSON(gson, fullCommand[1]);
-                            switch (fullCommand[0]) {
+                            Person element = getElementFromJSON(gson, command.getBody());
+                            switch (command.getName()) {
                                 case "remove_greater":
                                     return String.format("Удалено %d элементов\n", manager.removeGreater(element));
                                 case "add_if_min":
@@ -95,9 +95,9 @@ public class CommandHandler {
                             return ex.toString();
                         }
                     case "insert":
-                        String[] args = fullCommand[1].split(" ", 2);
+                        String[] args = command.getBody().split(" ", 2);
                         if (args.length == 1) {
-                            return "Ошибка, команда " + fullCommand[0] + " должна иметь 2 аргумента.";
+                            return "Ошибка, команда " + command.getName() + " должна иметь 2 аргумента.";
                         }
                         try {
                             String key = getKeyFromJSON(gson, args[0]);
