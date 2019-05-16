@@ -1,19 +1,23 @@
 import control.CollectionManager;
-import control.CommandHandler;
+import game.Person;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.*;
-import java.util.InputMismatchException;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Server {
 
     private DatagramSocket datagramSocket;
+    private CollectionManager collectionManager;
 
-    public Server(int port) throws IOException{
+    public Server(int port, File importFile) throws IOException{
         datagramSocket = new DatagramSocket();
         datagramSocket.connect(InetAddress.getLocalHost(), port);
+
+        collectionManager = new CollectionManager();
+        collectionManager.importFile(importFile);
 
         System.out.println("Сервер запущен");
         System.out.println("IP: " + datagramSocket.getLocalAddress());
@@ -21,16 +25,21 @@ public class Server {
 
     private void listen() throws IOException{
         while(true){
-            byte[] ib = new byte[4096];
-
-            DatagramPacket ip = new DatagramPacket(ib, ib.length);
+            DatagramPacket ip = new DatagramPacket(new byte[4096], 4096);
             datagramSocket.receive(ip);
 
-            ResponseThread thread = new ResponseThread(ib, datagramSocket, ip);
+            ResponseThread thread = new ResponseThread(datagramSocket, ip, collectionManager);
+            thread.start();
         }
     }
 
     public static void main(String[] args) {
+
+        if(args.length == 0) {
+            System.out.println("Путь до файла должен задаваться с помощью аргумента командной строки");
+            return;
+        }
+
         Scanner sc = new Scanner(System.in);
         int port;
         while (true) {
@@ -43,7 +52,7 @@ public class Server {
             }
         }
         try{
-          Server server = new Server(port);
+          Server server = new Server(port, new File(args[0]));
         } catch (IOException e) {
             e.printStackTrace();
         }

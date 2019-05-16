@@ -13,14 +13,6 @@ public class CollectionManager {
     private Date initDate;
     private File fileForIO;
 
-
-    CollectionManager(File collectionFile) {
-        this();
-        if (collectionFile != null && !importFile(collectionFile)) {
-            fileForIO = collectionFile;
-        }
-    }
-
     public CollectionManager() {
         collection = new ConcurrentHashMap<>();
         fileForIO = null;
@@ -31,15 +23,14 @@ public class CollectionManager {
         return fileForIO != null;
     }
 
-
     /**
      * Выводит информацию о коллекции
      */
 
-    void info() {
-        System.out.println("Коллекция имеет тип HashSet и содержит объекты класса Person");
-        System.out.println("Коллекция инициализировалась на основе следующих данных: " + initDate);
-        System.out.printf("Коллекция содержит %d элементов\n", collection.size());
+    String info() {
+        return String.format("Коллекция имеет тип HashSet и содержит объекты класса Person\n" +
+                "Коллекция инициализировалась на основе следующих данных: %s\n" +
+                "Коллекция содержит %d элементов\n", initDate.toString(), collection.size());
     }
 
     /**
@@ -48,19 +39,18 @@ public class CollectionManager {
      * @param key : (Things) - Remove key
      */
 
-    void remove(String key) {
-        if (collection.remove(key) != null)
-            System.out.println("Элемент удалён");
-        else
-            System.out.println("Коллекция не содержит данный элемент");
+    boolean remove(String key) {
+        return collection.remove(key) != null;
     }
 
     /**
      * Выводит все элементы коллекции.
      */
 
-    public void show() {
-        collection.forEach((key, value) -> System.out.println(key + " " + value.toString()));
+    public String show() {
+        StringBuilder result = new StringBuilder();
+        collection.forEach((key, value) -> result.append(key).append(" ").append(value.toString()).append("\n"));
+        return result.toString();
     }
 
     /**
@@ -69,10 +59,10 @@ public class CollectionManager {
      * @param element (Person) - Object of class Person
      */
 
-    public void removeGreater(Person element) {
+    public int removeGreater(Person element) {
         int beginSize = collection.size();
         collection.values().removeIf(i -> i.compareTo(element) > 0);
-        System.out.printf("Удалено %d элементов\n", beginSize - collection.size());
+        return beginSize - collection.size();
     }
 
     /**
@@ -81,10 +71,10 @@ public class CollectionManager {
      * @param key     : (String) - remove key
      */
 
-    public void removeGreaterKey(String key) {
+    public int removeGreaterKey(String key) {
         int beginSize = collection.size();
         collection.keySet().removeIf(i -> i.compareTo(key) > 0);
-        System.out.printf("Удалено %d элементов\n", beginSize - collection.size());
+        return beginSize - collection.size();
     }
 
     /**
@@ -93,11 +83,12 @@ public class CollectionManager {
      * @param element : (Person) - Object of class Person
      */
 
-    public void addIfMin(Person element) {
+    public boolean addIfMin(Person element) {
         if(collection.values().stream().allMatch(a -> a.compareTo(element) > 0)){
             insert(element.getName().toString().replace(" ", "_"), element);
+            return true;
         } else{
-            System.out.println("Элемент не добавлен");
+            return false;
         }
     }
 
@@ -109,10 +100,7 @@ public class CollectionManager {
      */
 
     public void insert(String key, Person element) {
-        Person previous = collection.put(key, element);
-        System.out.println("Элемент добавлен");
-        if (previous != null)
-            System.out.println("Прежний элемент по данному ключу потерян");
+        collection.put(key, element);
     }
 
     /**
@@ -123,9 +111,12 @@ public class CollectionManager {
 
     public boolean importFile(File importFile) {
         try {
-            if ((!(importFile.isFile()))) throw new FileNotFoundException("Ошибка. Указаный путь не ведёт к файлу.");
-            if (!(importFile.exists()))
-                throw new FileNotFoundException("Фаил коллекцией не найден. Добавьте элементы вручную или импортируйте из другого файла");
+            if (!importFile.isFile() && !importFile.createNewFile()){
+                throw new FileNotFoundException("Ошибка. Указаный путь не ведёт к файлу, " +
+                        "и файл с таким названием не может быть создан");
+            }
+         //   if (!(importFile.exists()))
+          //      throw new FileNotFoundException("Фаил коллекцией не найден. Добавьте элементы вручную или импортируйте из другого файла");
             if (!importFile.canRead()) throw new SecurityException("Доступ запрещён. Файл защищен от чтения");
 
             boolean res = readCSVFromFile(importFile);
@@ -134,6 +125,7 @@ public class CollectionManager {
             } else {
                 System.out.println("Ничего не добавлено, возможно импортируемая коллекция пуста, или элементы заданы неверно");
             }
+            fileForIO = importFile;
             return false;
         } catch (FileNotFoundException | SecurityException ex) {
             System.out.println(ex.getMessage());

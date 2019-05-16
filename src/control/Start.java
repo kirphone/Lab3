@@ -11,7 +11,7 @@ public class Start {
             CollectionManager manager = new CollectionManager(new File(args[0]));
             if(manager.isImported()){
                 CommandHandler handler = new CommandHandler(manager);
-                handler.control();
+                //handler.control();
             }
         }
     }
