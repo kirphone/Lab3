@@ -164,4 +164,8 @@ public class CollectionManager {
             }
         }
     }
+
+    public ConcurrentHashMap<String, Person> getCollection(){
+        return collection;
+    }
 }

@@ -6,8 +6,11 @@ import com.google.gson.JsonSyntaxException;
 import game.Animal;
 import game.Person;
 
+import java.util.AbstractMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CommandHandler {
     private CollectionManager manager;
@@ -120,5 +123,9 @@ public class CommandHandler {
                 return "Ошибка, Неизвестная команда.";
         }
         return null;
+    }
+
+    public ConcurrentHashMap<String, Person> getCollection(){
+        return manager.getCollection();
     }
 }

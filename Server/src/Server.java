@@ -56,6 +56,7 @@ public class Server {
         }
         try{
           Server server = new Server(port, new File(args[0]));
+          server.listen();
         } catch (IOException e) {
             e.printStackTrace();
         }
