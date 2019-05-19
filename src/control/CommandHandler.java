@@ -6,10 +6,8 @@ import com.google.gson.JsonSyntaxException;
 import game.Animal;
 import game.Person;
 
-import java.util.AbstractMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
+import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CommandHandler {
@@ -50,14 +48,16 @@ public class CommandHandler {
         }
     }
 
-    public String doCommand(String _command) {
-        Command command = new Command(_command);
+    public String doCommand(Command command) {
         switch (command.getName()) {
             case "insert":
             case "add_if_min":
             case "remove":
             case "remove_greater":
             case "remove_greater_key":
+            case "load":
+            case "save":
+            case "import":
                 if (command.getSize() == 1) {
                     return "Ошибка, команда " + command.getName() + " должна иметь аргумент.";
                 }
@@ -66,6 +66,8 @@ public class CommandHandler {
                 switch (command.getName()) {
                     case "remove":
                     case "remove_greater_key":
+                    case "load":
+                    case "save":
                         try {
                             String key = getKeyFromJSON(gson, command.getBody());
                             switch (command.getName()) {
@@ -73,10 +75,14 @@ public class CommandHandler {
                                     return manager.remove(key) ? "Элемент удалён" : "Коллекция не содержит данный элемент";
                                 case "remove_greater_key":
                                     return String.format("Удалено %d элементов\n", manager.removeGreaterKey(key));
+                                case "load":
+                                    return manager.importFile(new File(key));
+                                case "save":
+                                    return manager.finishWork(key);
                             }
                         } catch (JsonSyntaxException ex) {
                             return "Ошибка, ключ задан неверно. Используйте формат JSON.";
-                        } catch (ReadKeyFromJsonException ex) {
+                        } catch (ReadKeyFromJsonException | IOException ex) {
                             return ex.toString();
                         }
                     case "remove_greater":
@@ -109,12 +115,16 @@ public class CommandHandler {
                         } catch (ReadElementFromJsonException | ReadKeyFromJsonException ex) {
                             return ex.toString();
                         }
+
+                    case "import":
+                        return manager.importString(command.getBody());
                 }
                 break;
             case "info":
                 return manager.info();
             case "show":
                 return manager.show();
+
             /*case "stop_server":
                 manager.show();
                 manager.finishWork();

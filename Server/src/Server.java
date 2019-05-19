@@ -1,11 +1,9 @@
 import control.CollectionManager;
-import game.Person;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.*;
 import java.util.Scanner;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class Server {
 
@@ -28,8 +26,6 @@ public class Server {
         while(true){
             DatagramPacket ip = new DatagramPacket(new byte[4096], 4096);
             datagramSocket.receive(ip);
-
-
 
             ResponseThread thread = new ResponseThread(datagramSocket, ip, collectionManager);
             thread.start();

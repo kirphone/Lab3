@@ -1,4 +1,5 @@
 import control.CollectionManager;
+import control.Command;
 import control.CommandHandler;
 import game.Person;
 
@@ -28,7 +29,7 @@ public class ResponseThread extends Thread {
              ByteArrayOutputStream baos = new ByteArrayOutputStream();
              ObjectOutputStream oos = new ObjectOutputStream(baos)) {
 
-            String actions = handler.doCommand((String) ois.readObject());
+            String actions = handler.doCommand((Command) ois.readObject());
 
             //Оставляем информацию на сервере
             synchronized (System.out) {

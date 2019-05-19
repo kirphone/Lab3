@@ -1,6 +1,8 @@
 package control;
 
-public class Command {
+import java.io.Serializable;
+
+public class Command implements Serializable {
     private String name;
     private String body;
     private int size;
@@ -10,7 +12,7 @@ public class Command {
         String[] fullCommand = command.trim().split(" ", 2);
         name = fullCommand[0];
         size = fullCommand.length;
-        if(fullCommand.length == 2)
+        if(size == 2)
             body = fullCommand[1];
     }
 
@@ -24,5 +26,14 @@ public class Command {
 
     public int getSize(){
         return  size;
+    }
+
+    public void setBody(String _body){
+        body = _body;
+    }
+
+    @Override
+    public String toString() {
+        return name + " " + body;
     }
 }

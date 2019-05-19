@@ -103,6 +103,23 @@ public class CollectionManager {
         collection.put(key, element);
     }
 
+
+    /**
+     * Импортирует коллекцию из строки
+     *
+     * @param importString - строка для чтения
+     */
+
+
+    public String importString(String importString){
+        boolean res = readCSVFromString(importString);
+        if (!res) {
+            return "Добавлены все элементы";
+        } else {
+            return "Ничего не добавлено, возможно импортируемая коллекция пуста, или элементы заданы неверно";
+        }
+    }
+
     /**
      * Импортирует коллекцию из файла
      *
@@ -140,11 +157,20 @@ public class CollectionManager {
     }
 
     /**
+     * @param stringForRead - файл для чтения
+     */
+
+    private boolean readCSVFromString(String stringForRead){
+            List<String> allLines = Arrays.asList(stringForRead.trim().split("\n"));
+            return new CSVReaderAndWriter().read(allLines, collection);
+    }
+
+    /**
      * Завершает работу с коллекцией элементов, сохраняя ее в фаил из которого она была считана.
      * Если сохранение в исходный фаил не удалось, то сохранение происходит в фаил с уникальным названием.
      */
 
-    String finishWork() {              //порядок в csv файле: name, speed, currentLoc, dateOfBirth
+ /*   String finishWork() {              //порядок в csv файле: name, speed, currentLoc, dateOfBirth
         File saveFile = (fileForIO != null) ? fileForIO : new File("");
         CSVReaderAndWriter csv = new CSVReaderAndWriter();
         try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(saveFile))) {
@@ -162,6 +188,18 @@ public class CollectionManager {
             } catch (IOException ex) {
                 return "Сохранение коллекции не удалось";
             }
+        }
+    }*/
+
+    String finishWork(String filePath){
+        File saveFile = new File(filePath);
+        CSVReaderAndWriter csv = new CSVReaderAndWriter();
+        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(saveFile))) {
+            writer.write(csv.write(collection));
+            writer.flush();
+            return "Коллекция сохранена в файл " + saveFile.getAbsolutePath();
+        } catch (IOException | NullPointerException e) {
+            return "Сохранение коллекции не удалось\n" + e.toString();
         }
     }
 
